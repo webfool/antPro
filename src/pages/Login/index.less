@@ -1,0 +1,34 @@
+@import '~antd/es/style/themes/default.less';
+
+.btnContainer {
+  flex: 1;
+}
+
+.title {
+  width: 100%;
+  margin-top: 100px;
+  color: @heading-color;
+  font-weight: 600;
+  font-size: 33px;
+  font-family: Avenir, 'Helvetica Neue', Arial, Helvetica, sans-serif;
+}
+
+.loginButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px 30px;
+  color: #e8eff0;
+  background: linear-gradient(-45deg, rgba(36, 117, 202, 0.95) 0%, #619ede 100%);
+  border: none;
+  border-radius: 5px;
+
+  &:hover {
+    background: linear-gradient(-45deg, rgba(0, 87, 202, 0.95) 0%, #619ede 100%);
+    cursor: pointer;
+  }
+
+  .loginText {
+    padding-left: 10px;
+  }
+}

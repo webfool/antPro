@@ -1,0 +1,199 @@
+// 该文件用于定义全局样式
+@import '~antd/es/style/themes/default.less';
+@import './assets/less/reset.less';
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+.colorWeak {
+  filter: invert(80%);
+}
+
+.ant-layout {
+  min-height: 100vh;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+@media (max-width: @screen-xs) {
+  .ant-table {
+    width: 100%;
+    overflow-x: auto;
+    &-thead > tr,
+    &-tbody > tr {
+      > th,
+      > td {
+        white-space: pre;
+        > span {
+          display: block;
+        }
+      }
+    }
+  }
+}
+
+// 兼容IE11
+@media screen and(-ms-high-contrast: active), (-ms-high-contrast: none) {
+  body .ant-design-pro > .ant-layout {
+    min-height: 100vh;
+  }
+}
+
+// 定义 flex 常用类
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.content-row-between {
+  justify-content: space-between;
+}
+
+.content-row-around {
+  justify-content: space-around;
+}
+
+.content-row-center {
+  justify-content: center;
+}
+
+.content-row-end {
+  justify-content: flex-end;
+}
+
+.content-align-start {
+  align-items: flex-start;
+}
+
+.content-align-end {
+  align-items: flex-end;
+}
+
+.content-align-center {
+  align-items: center;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+.wrap {
+  flex-wrap: wrap;
+}
+
+// 文字相关
+.text-center {
+  text-align: center;
+}
+
+.font-20 {
+  font-size: 20px;
+}
+
+.font-33 {
+  font-size: 33px;
+}
+
+// 定位相关
+.relative {
+  position: relative;
+}
+
+.absolute {
+  position: absolute;
+}
+
+// margin、bottom
+.mt-10 {
+  margin-top: 10px;
+}
+
+.mt-20 {
+  margin-top: 20px;
+}
+
+.mt-30 {
+  margin-top: 30px;
+}
+
+.mt-40 {
+  margin-top: 40px;
+}
+
+.mt-50 {
+  margin-top: 50px;
+}
+
+.mt-60 {
+  margin-top: 60px;
+}
+
+.mr-10 {
+  margin-right: 10px;
+}
+
+.ml-10 {
+  margin-left: 10px;
+}
+
+.mb-10 {
+  margin-bottom: 10px;
+}
+
+.pt-10 {
+  padding-top: 10px;
+}
+
+.pr-10 {
+  padding-right: 10px;
+}
+
+.pb-10 {
+  padding-bottom: 10px;
+}
+
+.pb-20 {
+  padding-bottom: 10px;
+}
+
+// 背景相关
+.bg-white {
+  background: #fff;
+}
+
+// basicLayout 的一些特定样式
+.basic-logout-container {
+  height: 100%;
+
+  & .ant-spin-container {
+    height: 100%;
+  }
+}
+
+// 全局 loading 的样式
+.global-loading {
+  height: 100%;
+
+  & .ant-spin-container {
+    height: 100%;
+  }
+}
