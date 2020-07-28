@@ -57,7 +57,9 @@ class SecurityLayout extends React.Component<SecurityLayoutProps, SecurityLayout
 
     function createToLoginNode() {
       const queryString = stringify({
-        redirect: pathname.startsWith('/main') ? window.location.href : '/main'
+        redirect: pathname.startsWith('/main')
+          ? window.location.href
+          : `${window.location.origin}/main`
       })
       return !pathname.includes('/user/login') ? (
         <Redirect to={`/user/login?${queryString}`} />

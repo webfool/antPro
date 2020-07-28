@@ -24,25 +24,36 @@ const REQUEST_ID_HEADER = 'X-Request-Id'
 const TOKEN_HEADER = 'token'
 const prefix = env.baseUrl
 
+// 生成缓存请求的 key
+export function createRequestingKey(method: string, url: string, data?: object, baseUrl?: string) {
+  url = url.startsWith('http') ? url : (baseUrl || prefix) + url
+  return {
+    method,
+    url,
+    data,
+    cacheKey: `${method}${url}${JSON.stringify(data || {})}`
+  }
+}
+
 // 缓存正在请求的api所对应的取消请求的方法
-let requestingApis: { [key: string]: Canceler } = {}
+let requestingApis: { [key: string]: Canceler[] } = {}
 // 取消所有正在进行的请求
 export function cancelAllRequest() {
-  Object.values(requestingApis).forEach((cancel) => cancel())
+  ;([] as any[]).concat(...Object.values(requestingApis)).forEach((cancel) => cancel())
   requestingApis = {}
 }
 // 取消某个特定的请求
-export function cancelRequest(key: string | string[], baseUrl?: string) {
+export function cancelRequest(key: string | string[]) {
   const keys = Array.isArray(key) ? key : [key]
   keys.forEach((api) => {
-    api = (baseUrl || prefix) + api
-    requestingApis[api] && requestingApis[api]()
+    requestingApis[api] && requestingApis[api].forEach((c) => c())
     delete requestingApis[api]
   })
 }
 
 export interface requestOptions extends RequestOptionsInit {
   baseUrl?: string // 自定义 url 前缀
+  cancelBefore?: boolean // 是否取消正在进行的相同请求
   getCancel?(cancel: Canceler): void // 获取取消当前请求的方法
   loading?: boolean // 请求时是否开启全局 loading
   notToken?: boolean // 请求头是否不带 token
@@ -147,20 +158,30 @@ request.use(async (ctx, next) => {
   const { req } = ctx
   let { url } = req
   const { options } = req
-  const { baseUrl, getCancel, loading, notToken = false } = options as requestOptions
+  const {
+    baseUrl,
+    getCancel,
+    loading,
+    notToken = false,
+    cancelBefore = true
+  } = options as requestOptions
 
   // url 添加前缀
-  url = url.startsWith('http') ? url : (baseUrl || prefix) + url
+  // url = url.startsWith('http') ? url : (baseUrl || prefix) + url
 
   // 过滤空字段
   const { params, data, method } = options
   params && isObject(params) && objectTrim(params)
   data && isObject(data) && objectTrim(data)
 
-  const cacheKey = `${method}${url}${JSON.stringify(data || params || {})}`
+  // const cacheKey = `${method}${url}${JSON.stringify(data || params || {})}`
+  const { cacheKey, url: formatUrl } = createRequestingKey(method!, url, data || params, baseUrl)
+  url = formatUrl
 
   // 如果当前 api 正在请求，则取消之前的请求
-  if (requestingApis[cacheKey]) requestingApis[cacheKey]()
+  if (cancelBefore && requestingApis[cacheKey]) {
+    requestingApis[cacheKey].forEach((c) => c())
+  }
 
   // 配置头信息
   const headers = options.headers as Record<string, string>
@@ -172,7 +193,9 @@ request.use(async (ctx, next) => {
   const { CancelToken } = Request
   const { token, cancel } = CancelToken.source()
   options.cancelToken = token
-  requestingApis[cacheKey] = cancel
+  requestingApis[cacheKey] = requestingApis[cacheKey]
+    ? [...requestingApis[cacheKey], cancel]
+    : [cancel]
   if (typeof getCancel === 'function') {
     getCancel(cancel)
   }
@@ -206,7 +229,7 @@ request.use(async (ctx, next) => {
   if (res) {
     // 正常的请求，将实际的内容数据返回
     if (res.code === 0) {
-      ctx.res = res.data || {}
+      ctx.res = res.result || {}
     }
 
     // 异常数据，进行报错并将返回内容置为 null
